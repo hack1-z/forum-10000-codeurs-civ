@@ -23,13 +23,20 @@
     .titre { font-size: 32px; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.02em; color: #0f2d5e; }
     .sous-titre { font-size: 15px; color: #5a6a8a; margin: 0 0 16px; line-height: 1.5; }
 
-    .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; width: 100%; max-width: 680px; padding: 0 20px; }
+    .grille { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); /* 2 colonnes égales par ligne */
+      gap: 12px; 
+      width: 100%; 
+      max-width: 680px; 
+      padding: 0 20px; 
+    }
     
     .commune-btn { 
       background: #fff; 
       border: 1.5px solid #dde3f0; 
       border-radius: 14px; 
-      padding: 16px 20px; 
+      padding: 14px 16px; 
       display: flex; 
       align-items: center; 
       justify-content: space-between; 
@@ -40,8 +47,8 @@
       box-shadow: 0 2px 8px rgba(15,45,94,0.07); 
     }
     .commune-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,45,94,0.14); border-color: #2a4caa; }
-    .commune-nom { font-size: 16px; font-weight: 700; }
-    .commune-arrow { font-size: 18px; color: #2a4caa; }
+    .commune-nom { font-size: 14px; font-weight: 700; word-break: break-word; }
+    .commune-arrow { font-size: 16px; color: #2a4caa; margin-left: 8px; }
 
     .commune-header { width: 100%; max-width: 560px; display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px; }
     .retour-btn { background: none; border: none; color: #5a6a8a; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; padding: 0; }
@@ -89,40 +96,14 @@
     /* ============================================
        ADAPTATION MOBILE (RESPONSIVE)
        ============================================ */
-    @media screen and (max-width: 600px) {
-      .hero { padding: 30px 16px 20px; }
-      
-      /* Réduction de la taille du titre principal sur mobile */
-      .titre { font-size: 24px; }
-      .sous-titre { font-size: 14px; }
-      
-      .badge { font-size: 12px; margin-bottom: 12px; }
-
-      .grille { 
-        grid-template-columns: 1fr; /* Force une seule colonne sur mobile */
-        padding: 0 16px; 
-      }
-      
-      .commune-header { padding: 16px 16px 8px; }
-      .retour-btn { font-size: 13px; }
-      
-      /* Réduction du titre de la commune pour éviter qu'il ne dépasse */
-      .commune-titre { font-size: 18px; margin-top: 4px; }
-      .commune-sous-titre { font-size: 12px; margin-bottom: 16px; }
-
-      .generator { padding: 0 16px; gap: 12px; }
-      
-      .upload-zone { padding: 16px; }
-      .upload-text { font-size: 13px; }
-      .upload-sub { font-size: 11px; }
-
-      .wa-section { padding: 20px 16px 0; }
-      .wa-titre { font-size: 16px; }
-      
-      .footer { padding: 16px; font-size: 11px; }
-      
-      /* Ajustement des steps pour qu'ils tiennent sur une ligne */
-      .step { padding: 4px 10px; font-size: 10px; }
+  /* Media Query pour écrans PC et Tablettes */
+    @media (min-width: 600px) {
+      .titre { font-size: 32px; }
+      .commune-titre { font-size: 26px; }
+      /* Sur grand écran, on passe à 3 ou 4 colonnes pour éviter que les boutons soient trop larges */
+      .grille { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+      .commune-nom { font-size: 16px; }
+      .step { padding: 4px 14px; font-size: 12px; }
     }
   </style>
 </head>
