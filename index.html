@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum 10.000 Codeurs - J'y serai</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .page { min-height: 100vh; background: #ffffff; font-family: 'Segoe UI', system-ui, sans-serif; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; padding: 0 0 48px; }
+    .hero { text-align: center; padding: 44px 24px 28px; max-width: 560px; }
+    .badge { display: inline-block; background: #f0f4ff; border: 1px solid #c7d4f5; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 600; color: #2a4caa; margin-bottom: 18px; }
+    .titre { font-size: 32px; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.02em; color: #0f2d5e; }
+    .sous-titre { font-size: 15px; color: #5a6a8a; margin: 0 0 16px; line-height: 1.5; }
+    .flag { font-size: 40px; }
+
+    .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; width: 100%; max-width: 680px; padding: 0 20px; }
+    .commune-btn { background: #fff; border: 1.5px solid #dde3f0; border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: #0f2d5e; transition: transform .2s, box-shadow .2s, border-color .2s; text-align: left; box-shadow: 0 2px 8px rgba(15,45,94,0.07); }
+    .commune-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,45,94,0.14); border-color: #2a4caa; }
+    .commune-nom { font-size: 16px; font-weight: 700; }
+    .commune-arrow { font-size: 18px; color: #2a4caa; }
+
+    .commune-header { width: 100%; max-width: 560px; display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px; }
+    .retour-btn { background: none; border: none; color: #5a6a8a; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; padding: 0; }
+    .retour-btn:hover { color: #0f2d5e; }
+    .commune-titre { font-size: 26px; font-weight: 800; margin: 6px 0 2px; text-align: center; color: #0f2d5e; }
+    .commune-sous-titre { font-size: 13px; color: #8a9ab5; margin: 0 0 20px; text-align: center; }
+
+    .generator { width: 100%; max-width: 460px; padding: 0 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .canvas-wrap { position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(15,45,94,0.15); border: 1.5px solid #dde3f0; background: #f5f7fc; }
+    #previewCanvas { width: 100%; height: auto; display: block; }
+
+    .upload-zone { width: 100%; border: 2px dashed #c7d4f5; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; background: #f8faff; }
+    .upload-zone:hover { border-color: #2a4caa; background: #f0f4ff; }
+    .upload-zone input { display: none; }
+    .upload-label { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+    .upload-icon { font-size: 28px; }
+    .upload-text { font-size: 14px; font-weight: 700; color: #2a4caa; }
+    .upload-sub { font-size: 12px; color: #8a9ab5; }
+
+    .dl-btn { display: flex; align-items: center; gap: 8px; background: #0f2d5e; color: #fff; border: none; border-radius: 12px; padding: 13px 24px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; justify-content: center; transition: background .15s; }
+    .dl-btn:hover { background: #1a3d78; }
+    .dl-btn:disabled { background: #c5cedf; cursor: default; color: #fff; }
+
+    .wa-section { width: 100%; max-width: 460px; padding: 28px 20px 0; }
+    .wa-divider { border: none; border-top: 1.5px solid #eef1f8; margin-bottom: 24px; }
+    .wa-titre { font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 4px; color: #0f2d5e; }
+    .wa-desc { font-size: 13px; color: #8a9ab5; text-align: center; margin-bottom: 16px; }
+    .wa-content { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .qr-box { background: #fff; border-radius: 12px; padding: 10px; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #dde3f0; }
+    .qr-box img { width: 120px; height: 120px; object-fit: contain; }
+    .wa-btn { display: flex; align-items: center; gap: 8px; background: #25d366; color: #fff; text-decoration: none; border-radius: 12px; padding: 13px 20px; font-size: 14px; font-weight: 600; width: 100%; justify-content: center; transition: background .15s; cursor: pointer; border: none; }
+    .wa-btn:hover { background: #1aad4e; }
+
+    .footer { margin-top: 40px; border-top: 1.5px solid #eef1f8; width: 100%; max-width: 560px; padding-top: 16px; text-align: center; font-size: 12px; color: #aab5cc; letter-spacing: .04em; }
+
+    .steps { display: flex; gap: 6px; align-items: center; justify-content: center; }
+    .step { background: #f0f4ff; border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; color: #8a9ab5; border: 1.5px solid #dde3f0; }
+    .step.active { background: #0f2d5e; color: #fff; border-color: #0f2d5e; }
+  </style>
+</head>
+<body>
+
+<div class="page" id="app">
+  <div id="home">
+    <div class="hero">
+      <div class="badge">4e Édition · 18 Juillet 2026</div>
+      <h1 class="titre">Forum 10.000 Codeurs</h1>
+      <p class="sous-titre">Crée ta carte <em>« J'y serai »</em> — choisis mon Pays</p>
+      <div class="flag">🇨🇩</div>
+    </div>
+    <div class="grille" id="grille"></div>
+    <div class="footer">🌐 10000codeurs.com/forums</div>
+  </div>
+
+  <div id="communePage" style="display:none; width:100%; flex-direction:column; align-items:center;">
+    <div class="commune-header">
+      <button class="retour-btn" onclick="retour()">← Choisis mon Pays</button>
+      <div class="badge" id="dateHeader">18 Juil 2026</div>
+    </div>
+    <h2 class="commune-titre" id="communeTitre">J'y serai</h2>
+    <p class="commune-sous-titre">Forum 10.000 Codeurs · 4e Édition</p>
+
+    <div class="generator">
+      <div class="steps">
+        <div class="step active" id="step1">1. Aperçu</div>
+        <span style="color:#c7d4f5">→</span>
+        <div class="step" id="step2">2. Ta photo</div>
+        <span style="color:#c7d4f5">→</span>
+        <div class="step" id="step3">3. Télécharger</div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="previewCanvas" width="1280" height="1280"></canvas>
+      </div>
+
+      <div class="upload-zone">
+        <label class="upload-label" for="photoInput">
+          <span class="upload-icon">📷</span>
+          <span class="upload-text">Choisir ma photo</span>
+          <span class="upload-sub">JPG ou PNG — centrée automatiquement dans le cadre circulaire</span>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
+      </div>
+
+      <button class="dl-btn" id="dlBtn" disabled onclick="telecharger()">
+        ⬇ Télécharger ma carte
+      </button>
+    </div>
+
+    <div class="wa-section">
+      <hr class="wa-divider">
+      <h3 class="wa-titre">Rejoindre le groupe WhatsApp</h3>
+      <p class="wa-desc">Scanne le QR code ou clique sur le bouton</p>
+      <div class="wa-content">
+        <div class="qr-box" id="qrBox"></div>
+        <button class="wa-btn" id="waBtn" onclick="ouvrirWhatsApp()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Rejoindre le groupe
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">🌐 10000codeurs.com/forums</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// COORDONNÉES DU CERCLE — mesurées pixel par pixel sur l'image
+// fournie (1280×1280) :
+//   Centre X  : 666 px  → cx = 666/1280 = 0.5203
+//   Centre Y  : 736 px  → cy = 736/1280 = 0.5750
+//   Rayon photo: 312 px  → r  = 312/1280 = 0.2438
+//     (intérieur de l'anneau bleu : r_anneau = 343 px,
+//      la photo s'insère à l'intérieur sans couvrir l'anneau)
+// ============================================================
+// Coordonnées selon le pays
+// Groupe A — burkina, mauritanie, cote-ivoire
+// Groupe B — rdc, brazzaville, cameroun
+function getCercle(id) {
+  if (['burkina', 'mauritanie', 'cote-ivoire'].includes(id)) {
+    return { CX: 0.5203, CY: 0.5750, R: 0.25 };
+  }
+  return { CX: 0.5088, CY: 0.5485, R: 0.24 };
+}
+
+const COMMUNES = [
+  { id:"rdc",         nom:"République Démocratique du Congo", carteImage:"./images/carte-rdc.JPG",         qrImage:"./images/qr-rdc.JPG",         whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR" },
+  { id:"cameroun",    nom:"Cameroun",                        carteImage:"./images/carte-cameroun.JPG",    qrImage:"./images/qr-cameroun.JPG",    whatsappLien:"https://chat.whatsapp.com/DlwOKGIyEl4Emmg8EJ75Y" },
+  { id:"cote-ivoire", nom:"Côte d'Ivoire",                   carteImage:"./images/carte-cote-ivoire.JPG", qrImage:"./images/qr-cote-ivoire.JPG", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy" },
+  { id:"brazzaville", nom:"Congo Brazzaville",               carteImage:"./images/carte-brazzaville.JPG", qrImage:"./images/qr-brazzaville.JPG", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
+  { id:"mauritanie",  nom:"Mauritanie",                      carteImage:"./images/carte-mauritanie.JPG",  qrImage:"./images/qr-mauritanie.JPG",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
+  { id:"burkina",     nom:"Burkina-Faso",                    carteImage:"./images/carte-burkina.JPG",     qrImage:"./images/qr-burkina.JPG",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
+];
+
+let communeActive = null;
+let userImg       = null;
+let bannerImg     = null;
+let lienWA        = "#";
+
+const canvas = document.getElementById('previewCanvas');
+const ctx    = canvas.getContext('2d');
+
+// ── Construction de la grille ──────────────────
+const grille = document.getElementById('grille');
+COMMUNES.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'commune-btn';
+  btn.innerHTML = `<span class="commune-nom">${c.nom}</span><span class="commune-arrow">→</span>`;
+  btn.onclick = () => ouvrirCommune(c);
+  grille.appendChild(btn);
+});
+
+// ── Navigation ─────────────────────────────────
+function ouvrirCommune(c) {
+  communeActive = c;
+  userImg = null;
+
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('communePage').style.display = 'flex';
+  document.getElementById('communeTitre').textContent = "J'y serai — " + c.nom;
+
+  // QR Code
+  document.getElementById('qrBox').innerHTML =
+    `<img src="${c.qrImage}" alt="QR Code"
+          style="width:120px;height:120px;object-fit:contain;"
+          onerror="this.parentNode.innerHTML='<span style=font-size:36px>📱</span>'">`;
+
+  // Bouton WhatsApp
+  lienWA = c.whatsappLien;
+  document.getElementById('waBtn').innerHTML =
+    `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+     Rejoindre le groupe de ${c.nom}`;
+
+  document.getElementById('dlBtn').disabled = true;
+  document.getElementById('photoInput').value = '';
+  setStep(1);
+
+  // Chargement de la bannière
+  // Le canvas prend EXACTEMENT les dimensions réelles de l'image → zéro décalage
+  bannerImg = new Image();
+  bannerImg.crossOrigin = 'anonymous';
+  bannerImg.onload = () => {
+    canvas.width  = bannerImg.naturalWidth;   // ex. 1280
+    canvas.height = bannerImg.naturalHeight;  // ex. 1280
+    dessiner();
+  };
+  bannerImg.onerror = () => { bannerImg = null; dessiner(); };
+  bannerImg.src = c.carteImage;
+}
+
+function retour() {
+  document.getElementById('communePage').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+  communeActive = null; userImg = null; bannerImg = null; lienWA = "#";
+}
+
+function ouvrirWhatsApp() {
+  if (lienWA !== "#") window.open(lienWA, '_blank');
+}
+
+function setStep(n) {
+  [1,2,3].forEach(i => document.getElementById('step'+i).classList.toggle('active', i===n));
+}
+
+// ── Dessin principal ────────────────────────────
+// Ordre :
+//   1. Bannière complète (inclut le paysage + l'anneau bleu)
+//   2. Photo de l'utilisateur clippée au cercle intérieur (r=312 px sur 1280)
+//      → l'anneau bleu (r=343 px) reste intact au-dessus de la photo
+function dessiner() {
+  const c = communeActive;
+  if (!c) return;
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Coordonnées absolues du cercle photo (selon le pays)
+  const { CX, CY, R } = getCercle(c.id);
+  const cx = CX * W;
+  const cy = CY * H;
+  const r  = R  * W;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ── 1. Bannière de fond ──────────────────────
+  if (bannerImg && bannerImg.complete && bannerImg.naturalWidth > 0) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bannerImg, 0, 0, W, H);
+  } else {
+    ctx.fillStyle = '#0f2d5e';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = `bold ${W * 0.025}px Segoe UI`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Chargement de la carte…', W / 2, H * 0.12);
+  }
+
+  // ── 2. Photo de l'utilisateur dans le cercle ─
+  if (userImg && userImg.complete && userImg.naturalWidth > 0) {
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    // Cover : cadrage centré sans déformation
+    const iw = userImg.naturalWidth;
+    const ih = userImg.naturalHeight;
+    const scale = Math.max((r * 2) / iw, (r * 2) / ih);
+    const sw = iw * scale;
+    const sh = ih * scale;
+    ctx.drawImage(userImg, cx - sw / 2, cy - sh / 2, sw, sh);
+
+    ctx.restore();
+
+  } else {
+    // Placeholder avant upload : cercle en pointillés + icône appareil photo
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = Math.round(W * 0.004);
+    ctx.setLineDash([Math.round(W * 0.012), Math.round(W * 0.008)]);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.font = `${Math.round(r * 0.55)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('📷', cx, cy);
+    ctx.textBaseline = 'alphabetic';
+  }
+}
+
+// ── Gestion de l'upload photo ───────────────────
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  setStep(2);
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    userImg = new Image();
+    userImg.onload = () => {
+      setStep(3);
+      document.getElementById('dlBtn').disabled = false;
+      dessiner();
+    };
+    userImg.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Téléchargement ──────────────────────────────
+function telecharger() {
+  try {
+    const link = document.createElement('a');
+    link.download = `carte-jyserai-${communeActive.id}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (err) {
+    alert("Téléchargement bloqué en local (CORS). Fonctionne normalement sur un serveur web.");
+  }
+}
+</script>
+
+</body>
+</html>
