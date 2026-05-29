@@ -27,7 +27,13 @@
 
     .generator { width: 100%; max-width: 460px; padding: 0 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .canvas-wrap { position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(15,45,94,0.15); border: 1.5px solid #dde3f0; background: #f5f7fc; }
-    #previewCanvas { width: 100%; height: auto; display: block; }
+    #previewCanvas { width: 100%; height: auto; display: block; cursor: default; }
+    #previewCanvas.draggable { cursor: grab; }
+    #previewCanvas.draggable:active { cursor: grabbing; }
+
+    /* Hint de déplacement */
+    .drag-hint { display: none; align-items: center; gap: 6px; font-size: 12px; color: #2a4caa; background: #f0f4ff; border: 1px solid #c7d4f5; border-radius: 20px; padding: 5px 12px; }
+    .drag-hint.visible { display: flex; }
 
     .upload-zone { width: 100%; border: 2px dashed #c7d4f5; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; background: #f8faff; }
     .upload-zone:hover { border-color: #2a4caa; background: #f0f4ff; }
@@ -93,10 +99,15 @@
         <canvas id="previewCanvas" width="1280" height="1280"></canvas>
       </div>
 
+      <!-- Hint visible uniquement après upload de la photo -->
+      <div class="drag-hint" id="dragHint">
+        ✋ Glisse la photo pour la repositionner
+      </div>
+
       <div class="upload-zone">
         <label class="upload-label" for="photoInput">
           <span class="upload-icon">📷</span>
-          <span class="upload-text">Choisir ma photo</span>
+          <span class="upload-text" id="uploadText">Choisir ma photo</span>
           <span class="upload-sub">JPG ou PNG — centrée automatiquement dans le cadre circulaire</span>
         </label>
         <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
@@ -125,18 +136,7 @@
 </div>
 
 <script>
-// ============================================================
-// COORDONNÉES DU CERCLE — mesurées pixel par pixel sur l'image
-// fournie (1280×1280) :
-//   Centre X  : 666 px  → cx = 666/1280 = 0.5203
-//   Centre Y  : 736 px  → cy = 736/1280 = 0.5750
-//   Rayon photo: 312 px  → r  = 312/1280 = 0.2438
-//     (intérieur de l'anneau bleu : r_anneau = 343 px,
-//      la photo s'insère à l'intérieur sans couvrir l'anneau)
-// ============================================================
-// Coordonnées selon le pays
-// Groupe A — burkina, mauritanie, cote-ivoire
-// Groupe B — rdc, brazzaville, cameroun
+// ── Coordonnées selon le pays ──────────────────
 function getCercle(id) {
   if (['burkina', 'mauritanie', 'cote-ivoire'].includes(id)) {
     return { CX: 0.5203, CY: 0.5750, R: 0.25 };
@@ -145,12 +145,12 @@ function getCercle(id) {
 }
 
 const COMMUNES = [
-  { id:"rdc",         nom:"République Démocratique du Congo", carteImage:"./images/carte-rdc.jpg",         qrImage:"./images/qr-rdc.jpg",         whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR" },
-  { id:"cameroun",    nom:"Cameroun",                        carteImage:"./images/carte-cameroun.jpg",    qrImage:"./images/qr-cameroun.jpg",    whatsappLien:"https://chat.whatsapp.com/DlwOKGIyEl4Emmg8EJ75Y" },
-  { id:"cote-ivoire", nom:"Côte d'Ivoire",                   carteImage:"./images/carte-cote-ivoire.jpg", qrImage:"./images/qr-cote-ivoire.jpg", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy" },
-  { id:"brazzaville", nom:"Congo Brazzaville",               carteImage:"./images/carte-brazzaville.jpg", qrImage:"./images/qr-brazzaville.jpg", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
-  { id:"mauritanie",  nom:"Mauritanie",                      carteImage:"./images/carte-mauritanie.jpg",  qrImage:"./images/qr-mauritanie.jpg",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
-  { id:"burkina",     nom:"Burkina-Faso",                    carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
+  { id:"rdc",         nom:"République Démocratique du Congo", carteImage:"./images/carte-rdc.JPG",         qrImage:"./images/qr-rdc.JPG",         whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR" },
+  { id:"cameroun",    nom:"Cameroun",                        carteImage:"./images/carte-cameroun.JPG",    qrImage:"./images/qr-cameroun.JPG",    whatsappLien:"https://chat.whatsapp.com/DlwOKGIyEl4Emmg8EJ75Y" },
+  { id:"cote-ivoire", nom:"Côte d'Ivoire",                   carteImage:"./images/carte-cote-ivoire.JPG", qrImage:"./images/qr-cote-ivoire.JPG", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy" },
+  { id:"brazzaville", nom:"Congo Brazzaville",               carteImage:"./images/carte-brazzaville.JPG", qrImage:"./images/qr-brazzaville.JPG", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
+  { id:"mauritanie",  nom:"Mauritanie",                      carteImage:"./images/carte-mauritanie.JPG",  qrImage:"./images/qr-mauritanie.JPG",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
+  { id:"burkina",     nom:"Burkina-Faso",                    carteImage:"./images/carte-burkina.JPG",     qrImage:"./images/qr-burkina.JPG",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
 ];
 
 let communeActive = null;
@@ -158,8 +158,90 @@ let userImg       = null;
 let bannerImg     = null;
 let lienWA        = "#";
 
+// ── Variables de déplacement de la photo ───────
+let photoOffsetX = 0;   // décalage horizontal de la photo dans le cercle
+let photoOffsetY = 0;   // décalage vertical
+let isDragging   = false;
+let dragLastX    = 0;
+let dragLastY    = 0;
+
 const canvas = document.getElementById('previewCanvas');
 const ctx    = canvas.getContext('2d');
+
+// ── Convertit les coordonnées écran → canvas ───
+// (nécessaire car le canvas est affiché en CSS plus petit que sa résolution réelle)
+function screenToCanvas(clientX, clientY) {
+  const rect   = canvas.getBoundingClientRect();
+  const scaleX = canvas.width  / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top)  * scaleY,
+  };
+}
+
+// ── Vérifie si le point est dans le cercle ─────
+function dansLeCercle(canvasX, canvasY) {
+  if (!communeActive) return false;
+  const { CX, CY, R } = getCercle(communeActive.id);
+  const cx = CX * canvas.width;
+  const cy = CY * canvas.height;
+  const r  = R  * canvas.width;
+  const dx = canvasX - cx;
+  const dy = canvasY - cy;
+  return (dx * dx + dy * dy) <= (r * r);
+}
+
+// ── Événements souris ──────────────────────────
+canvas.addEventListener('mousedown', e => {
+  if (!userImg) return;
+  const pos = screenToCanvas(e.clientX, e.clientY);
+  if (!dansLeCercle(pos.x, pos.y)) return;
+  isDragging = true;
+  dragLastX  = pos.x;
+  dragLastY  = pos.y;
+  e.preventDefault();
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const pos  = screenToCanvas(e.clientX, e.clientY);
+  photoOffsetX += pos.x - dragLastX;
+  photoOffsetY += pos.y - dragLastY;
+  dragLastX = pos.x;
+  dragLastY = pos.y;
+  dessiner();
+  e.preventDefault();
+});
+
+canvas.addEventListener('mouseup',    () => { isDragging = false; });
+canvas.addEventListener('mouseleave', () => { isDragging = false; });
+
+// ── Événements tactiles (mobile) ───────────────
+canvas.addEventListener('touchstart', e => {
+  if (!userImg) return;
+  const t   = e.touches[0];
+  const pos = screenToCanvas(t.clientX, t.clientY);
+  if (!dansLeCercle(pos.x, pos.y)) return;
+  isDragging = true;
+  dragLastX  = pos.x;
+  dragLastY  = pos.y;
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  const t   = e.touches[0];
+  const pos = screenToCanvas(t.clientX, t.clientY);
+  photoOffsetX += pos.x - dragLastX;
+  photoOffsetY += pos.y - dragLastY;
+  dragLastX = pos.x;
+  dragLastY = pos.y;
+  dessiner();
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { isDragging = false; });
 
 // ── Construction de la grille ──────────────────
 const grille = document.getElementById('grille');
@@ -175,18 +257,21 @@ COMMUNES.forEach(c => {
 function ouvrirCommune(c) {
   communeActive = c;
   userImg = null;
+  photoOffsetX = 0;
+  photoOffsetY = 0;
 
   document.getElementById('home').style.display = 'none';
   document.getElementById('communePage').style.display = 'flex';
   document.getElementById('communeTitre').textContent = "J'y serai — " + c.nom;
+  document.getElementById('dragHint').classList.remove('visible');
+  document.getElementById('uploadText').textContent = 'Choisir ma photo';
+  canvas.classList.remove('draggable');
 
-  // QR Code
   document.getElementById('qrBox').innerHTML =
     `<img src="${c.qrImage}" alt="QR Code"
           style="width:120px;height:120px;object-fit:contain;"
           onerror="this.parentNode.innerHTML='<span style=font-size:36px>📱</span>'">`;
 
-  // Bouton WhatsApp
   lienWA = c.whatsappLien;
   document.getElementById('waBtn').innerHTML =
     `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -196,13 +281,11 @@ function ouvrirCommune(c) {
   document.getElementById('photoInput').value = '';
   setStep(1);
 
-  // Chargement de la bannière
-  // Le canvas prend EXACTEMENT les dimensions réelles de l'image → zéro décalage
   bannerImg = new Image();
   bannerImg.crossOrigin = 'anonymous';
   bannerImg.onload = () => {
-    canvas.width  = bannerImg.naturalWidth;   // ex. 1280
-    canvas.height = bannerImg.naturalHeight;  // ex. 1280
+    canvas.width  = bannerImg.naturalWidth;
+    canvas.height = bannerImg.naturalHeight;
     dessiner();
   };
   bannerImg.onerror = () => { bannerImg = null; dessiner(); };
@@ -213,6 +296,7 @@ function retour() {
   document.getElementById('communePage').style.display = 'none';
   document.getElementById('home').style.display = 'block';
   communeActive = null; userImg = null; bannerImg = null; lienWA = "#";
+  photoOffsetX = 0; photoOffsetY = 0;
 }
 
 function ouvrirWhatsApp() {
@@ -224,10 +308,6 @@ function setStep(n) {
 }
 
 // ── Dessin principal ────────────────────────────
-// Ordre :
-//   1. Bannière complète (inclut le paysage + l'anneau bleu)
-//   2. Photo de l'utilisateur clippée au cercle intérieur (r=312 px sur 1280)
-//      → l'anneau bleu (r=343 px) reste intact au-dessus de la photo
 function dessiner() {
   const c = communeActive;
   if (!c) return;
@@ -235,7 +315,6 @@ function dessiner() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // Coordonnées absolues du cercle photo (selon le pays)
   const { CX, CY, R } = getCercle(c.id);
   const cx = CX * W;
   const cy = CY * H;
@@ -243,7 +322,7 @@ function dessiner() {
 
   ctx.clearRect(0, 0, W, H);
 
-  // ── 1. Bannière de fond ──────────────────────
+  // 1. Bannière de fond
   if (bannerImg && bannerImg.complete && bannerImg.naturalWidth > 0) {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
@@ -257,27 +336,30 @@ function dessiner() {
     ctx.fillText('Chargement de la carte…', W / 2, H * 0.12);
   }
 
-  // ── 2. Photo de l'utilisateur dans le cercle ─
+  // 2. Photo dans le cercle (avec offset de déplacement)
   if (userImg && userImg.complete && userImg.naturalWidth > 0) {
-
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.closePath();
     ctx.clip();
 
-    // Cover : cadrage centré sans déformation
     const iw = userImg.naturalWidth;
     const ih = userImg.naturalHeight;
     const scale = Math.max((r * 2) / iw, (r * 2) / ih);
     const sw = iw * scale;
     const sh = ih * scale;
-    ctx.drawImage(userImg, cx - sw / 2, cy - sh / 2, sw, sh);
 
+    // ← photoOffsetX / Y permet de déplacer la photo dans le cercle
+    ctx.drawImage(userImg,
+      cx - sw / 2 + photoOffsetX,
+      cy - sh / 2 + photoOffsetY,
+      sw, sh
+    );
     ctx.restore();
 
   } else {
-    // Placeholder avant upload : cercle en pointillés + icône appareil photo
+    // Placeholder
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -288,7 +370,6 @@ function dessiner() {
     ctx.setLineDash([Math.round(W * 0.012), Math.round(W * 0.008)]);
     ctx.stroke();
     ctx.restore();
-
     ctx.fillStyle = 'rgba(255,255,255,0.65)';
     ctx.font = `${Math.round(r * 0.55)}px sans-serif`;
     ctx.textAlign = 'center';
@@ -298,11 +379,15 @@ function dessiner() {
   }
 }
 
-// ── Gestion de l'upload photo ───────────────────
+// ── Upload photo ────────────────────────────────
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
   setStep(2);
+
+  // Réinitialiser l'offset à chaque nouveau choix de photo
+  photoOffsetX = 0;
+  photoOffsetY = 0;
 
   const reader = new FileReader();
   reader.onload = ev => {
@@ -310,6 +395,10 @@ function handlePhoto(e) {
     userImg.onload = () => {
       setStep(3);
       document.getElementById('dlBtn').disabled = false;
+      // Activer le drag et afficher le hint
+      canvas.classList.add('draggable');
+      document.getElementById('dragHint').classList.add('visible');
+      document.getElementById('uploadText').textContent = 'Changer ma photo';
       dessiner();
     };
     userImg.src = ev.target.result;
