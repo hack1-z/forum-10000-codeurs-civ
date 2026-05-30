@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Forum 10.000 Codeurs - J'y serai</title>
   <style>
-    /* ── VARIABLES CSS POUR UN THEME FACILE A MAINTENIR ── */
+    /* ── VARIABLES CSS ── */
     :root {
       --primary: #0f2d5e;
       --primary-hover: #1a3d78;
@@ -33,6 +33,9 @@
 
     .page { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 48px; }
 
+    /* Utilitaires */
+    .hide { display: none !important; }
+
     /* ── EN-TÊTE ── */
     .hero { text-align: center; padding: 40px 20px 24px; max-width: 600px; }
     .badge {
@@ -44,29 +47,43 @@
     .sous-titre { font-size: 16px; color: var(--text-muted); line-height: 1.5; }
     .flag { font-size: 48px; margin-top: 8px; }
 
-    /* ── GRILLE PAYS ── */
+    /* ── GRILLE PAYS RESPONSIVE ── */
     .grille {
       display: grid;
-      /* Mobile : 2 colonnes adaptatives. Desktop : automatique */
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px; width: 100%; max-width: 720px; padding: 0 20px;
+      /* Adaptabilité : largeur minimale de 200px pour des boutons plus petits côte à côte */
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px; width: 100%; max-width: 800px; padding: 0 20px;
     }
-    @media (max-width: 400px) {
-      .grille { grid-template-columns: 1fr; } /* 1 colonne pour les très petits écrans */
-    }
+    @media (max-width: 400px) { .grille { grid-template-columns: 1fr; } }
 
+    /* ── BOUTONS PAYS (Fins et ajustés au texte) ── */
     .commune-btn {
       background: var(--card-bg); border: 1.5px solid var(--border);
-      border-radius: var(--radius); padding: 20px 16px;
+      border-radius: var(--radius); 
+      width: 6.5cm;height: 1.5cm;
+      /* Ajustement MODIFIÉ : padding très réduit pour supprimer les espaces superflus */
+      padding: 6px 12px; 
       display: flex; align-items: center; justify-content: space-between;
       cursor: pointer; color: var(--primary); text-align: left;
-      transition: var(--transition); box-shadow: 0 2px 8px rgba(15,45,94,0.04);
+      transition: var(--transition); box-shadow: 0 2px 8px rgba(15,45,94,0.04);gap:6px;
     }
-    .commune-btn:hover {
-      transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent);
+    
+    .commune-btn:active {
+      transform: scale(0.98); border-color: var(--accent); background: #f0f4ff;
     }
-    .commune-nom { font-size: 16px; font-weight: 700; }
-    .commune-arrow { font-size: 20px; color: var(--accent); transition: transform 0.2s; }
+    @media (min-width: 620px) {
+        .commune-btn:hover {
+            transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent);
+        }
+    }
+    
+    .commune-nom { 
+        /* Ajustement MODIFIÉ : taille de police réduite */
+        font-size: 15px; 
+        font-weight: 700; display: flex; align-items: center; gap: 8px; 
+    }
+    /* Ajustement MODIFIÉ : Flèche réduite */
+    .commune-arrow { font-size: 16px; color: var(--accent); transition: transform 0.2s; }
     .commune-btn:hover .commune-arrow { transform: translateX(4px); }
 
     /* ── PAGE GENERATEUR ── */
@@ -78,7 +95,7 @@
     }
     .retour-btn:hover { color: var(--primary); }
     
-    .commune-titre { font-size: 28px; font-weight: 800; text-align: center; color: var(--primary); margin-bottom: 4px; }
+    .commune-titre { font-size: clamp(22px, 5vw, 28px); font-weight: 800; text-align: center; color: var(--primary); margin-bottom: 4px; padding: 0 20px;}
     .commune-sous-titre { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
 
     .generator { width: 100%; max-width: 500px; padding: 0 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
@@ -94,16 +111,16 @@
       border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
       border: 1.5px solid var(--border); background: var(--card-bg);
     }
-    #previewCanvas {
+    canvas {
       width: 100%; height: 100%; display: block; object-fit: contain;
-      touch-action: none; /* CRITIQUE: Empêche le scroll sur mobile au touché */
+      touch-action: none;
     }
-    #previewCanvas.draggable { cursor: grab; }
-    #previewCanvas.draggable:active { cursor: grabbing; }
+    canvas.draggable { cursor: grab; }
+    canvas.draggable:active { cursor: grabbing; }
 
     /* Hint d'interaction */
     .drag-hint {
-      display: none; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
+      display: none; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600;
       color: var(--accent); background: #e8effa; border: 1px solid #c7d4f5;
       border-radius: 20px; padding: 8px 16px; margin-top: -8px; animation: popIn 0.3s ease;
     }
@@ -126,33 +143,59 @@
       display: flex; align-items: center; justify-content: center; gap: 10px;
       background: var(--primary); color: #fff; border: none; border-radius: var(--radius);
       padding: 16px 24px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%;
-      transition: var(--transition); box-shadow: 0 4px 12px rgba(15,45,94,0.15);
+      transition: var(--transition); box-shadow: 0 4px 12px rgba(15, 45, 94, 0.15);
     }
     .dl-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
     .dl-btn:disabled { background: #c5cedf; cursor: not-allowed; box-shadow: none; }
 
-    /* Section WhatsApp */
-    .wa-section { width: 100%; max-width: 500px; padding: 32px 20px 0; }
-    .wa-divider { border: none; border-top: 1.5px solid var(--border); margin-bottom: 24px; }
-    .wa-titre { font-size: 18px; font-weight: 800; text-align: center; margin-bottom: 6px; color: var(--primary); }
-    .wa-desc { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 20px; }
-    .wa-content { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    @media (min-width: 480px) {
-      .wa-content { flex-direction: row; justify-content: center; align-items: stretch; }
+    /* ========= WHATSAPP SECTION ( Powerful Conditionnelle ) ========= */
+    .wa-section {
+      width: 100%;
+      max-width: 500px;
+      padding: 32px 20px 0;
+      /* Masquage par défaut avec transition */
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .qr-box {
+    
+    /* Classe d'activation de la section */
+    .wa-section.revealed {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .separator { border: none; border-top: 1.5px solid var(--border); margin-bottom: 24px; }
+    .wa-title { font-size: 19px; font-weight: 800; text-align: center; margin-bottom: 4px; color: var(--primary); }
+    .wa-sub { text-align: center; font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+    .wa-flex { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+
+    @media (min-width: 560px) {
+      .wa-flex { flex-direction: row; justify-content: center; }
+    }
+
+    .qr-place {
       background: var(--card-bg); border-radius: var(--radius); padding: 12px;
       display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--border);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
     }
-    .qr-box img { width: 120px; height: 120px; object-fit: contain; }
-    .wa-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      background: var(--whatsapp); color: #fff; text-decoration: none; border-radius: var(--radius);
-      padding: 16px 24px; font-size: 16px; font-weight: 700; width: 100%; transition: var(--transition);
-    }
-    .wa-btn:hover { background: var(--whatsapp-hover); transform: translateY(-2px); }
+    .qr-place img { width: 130px; height: 130px; object-fit: contain; }
 
-    .footer { margin-top: 48px; padding-top: 20px; border-top: 1.5px solid var(--border); width: 100%; max-width: 600px; text-align: center; font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    .wa-button {
+      background: var(--whatsapp); border: none; border-radius: 60px;
+      padding: 14px 28px; font-weight: 700; font-size: 15px; color: white;
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+      width: 100%; justify-content: center; transition: background 0.2s;
+    }
+    .wa-button:hover { background: var(--whatsapp-hover); }
+
+    @media (min-width: 560px) {
+      .wa-button { width: auto; padding: 14px 32px; }
+    }
+
+    .footer-note { margin-top: 48px; padding-top: 20px; border-top: 1.5px solid var(--border); width: 100%; max-width: 600px; text-align: center; font-size: 13px; color: var(--text-soft); font-weight: 600; }
 
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
   </style>
@@ -165,11 +208,11 @@
     <div class="hero">
       <div class="badge">4e Édition · 18 Juillet 2026</div>
       <h1 class="titre">Forum 10.000 Codeurs</h1>
-      <p class="sous-titre">Crée ta carte personnalisée <em>« J'y serai »</em> pour soutenir l'événement.</p>
+      <p class="sous-titre">Crée ta carte personnalisée <em>« J'y serai »</em> — choisis ton Pays</p>
       <div class="flag">🌍</div>
     </div>
     <div class="grille" id="grille"></div>
-    <div class="footer">🌐 10000codeurs.com/forums</div>
+    <div class="footer-note">🌐 10000codeurs.com/forums</div>
   </div>
 
   <div id="communePage" style="display:none; width:100%; flex-direction:column; align-items:center;">
@@ -187,8 +230,10 @@
     <div class="generator">
       <div class="steps">
         <div class="step active" id="step1">1. Modèle</div>
-        <div class="step" id="step2">2. Ma photo</div>
-        <div class="step" id="step3">3. Génération</div>
+        <span style="color:var(--border)">→</span>
+        <div class="step" id="step2">2. Ta photo</div>
+        <span style="color:var(--border)">→</span>
+        <div class="step" id="step3">3. Télécharger</div>
       </div>
 
       <div class="canvas-wrap">
@@ -202,11 +247,11 @@
 
       <div class="upload-zone">
         <label class="upload-label" for="photoInput">
-          <span class="upload-icon">📷</span>
+          <span class="upload-icon">📸</span>
           <span class="upload-text" id="uploadText">Choisir ma photo</span>
-          <span class="upload-sub">Format JPG/PNG. Ajustement automatique.</span>
+          <span class="upload-sub">JPG/PNG. Elle sera centrée automatiquement.</span>
         </label>
-        <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
+        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" onchange="handlePhoto(event)">
       </div>
 
       <button class="dl-btn" id="dlBtn" disabled onclick="telecharger()">
@@ -215,79 +260,90 @@
       </button>
     </div>
 
-    <div class="wa-section">
-      <hr class="wa-divider">
-      <h3 class="wa-titre">Rejoindre la communauté</h3>
-      <p class="wa-desc">Connecte-toi avec les autres participants de ton pays.</p>
-      <div class="wa-content">
-        <div class="qr-box">
-          <img id="qrImg" src="" alt="QR Code" onerror="this.style.display='none'">
+    <div class="wa-section" id="waBlock">
+      <hr class="separator">
+      <div class="wa-title">📱 Restez connecté</div>
+      <div class="wa-sub">Rejoignez le groupe WhatsApp de votre pays</div>
+      <div class="wa-flex">
+        <div class="qr-place" id="qrContainer">
+            <img id="qrImg" src="" alt="QR Code">
         </div>
-        <a class="wa-btn" id="waBtn" href="#" target="_blank" rel="noopener">
+        <button class="wa-button" id="whatsappGroupBtn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Rejoindre le groupe WhatsApp
-        </a>
+          Rejoindre le groupe
+        </button>
       </div>
     </div>
-
-    <div class="footer">🌐 10000codeurs.com/forums</div>
+    
+    <div class="footer-note">🌐 10000codeurs.com/forums</div>
   </div>
 </div>
 
 <script>
-/* =========================================================
-   1. DONNÉES & CONFIGURATION
-   ========================================================= */
+/* =========================================
+   1. DONNÉES & CONFIGURATION (Avec Slugs)
+========================================= */
 const COMMUNES = [
-  { id:"rdc",         nom:"R.D. Congo",      carteImage:"./images/carte-rdc.jpg",         qrImage:"./images/qr-rdc.jpg",         whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR",         cercle:{cx:0.5088,cy:0.5485,r:0.24} },
-  { id:"cameroun",    nom:"Cameroun",        carteImage:"./images/carte-cameroun.jpg",    qrImage:"./images/qr-cameroun.jpg",    whatsappLien:"https://chat.whatsapp.com/DlwOKGIyEl4Emmg8EJ75Y",         cercle:{cx:0.5088,cy:0.5485,r:0.24} },
-  { id:"cote-ivoire", nom:"Côte d'Ivoire",   carteImage:"./images/carte-cote-ivoire.jpg", qrImage:"./images/qr-cote-ivoire.jpg", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy",         cercle:{cx:0.5203,cy:0.5750,r:0.25} },
-  { id:"brazzaville", nom:"Congo Brazza.",   carteImage:"./images/carte-brazzaville.jpg", qrImage:"./images/qr-brazzaville.jpg", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t", cercle:{cx:0.5088,cy:0.5485,r:0.24} },
-  { id:"mauritanie",  nom:"Mauritanie",      carteImage:"./images/carte-mauritanie.jpg",  qrImage:"./images/qr-mauritanie.jpg",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8",         cercle:{cx:0.5203,cy:0.5750,r:0.25} },
-  { id:"burkina",     nom:"Burkina-Faso",    carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ",         cercle:{cx:0.5203,cy:0.5750,r:0.25} }
+  { id:"rdc",         nom:"R.D. Congo",      slug:"rdc",         carteImage:"./images/carte-rdc.jpg",          qrImage:"./images/qr-rdc.jpg",          whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR" },
+  { id:"cameroun",    nom:"Cameroun",        slug:"cameroun",    carteImage:"./images/carte-cameroun.jpg",    qrImage:"./images/qr-cameroun.jpg",    whatsappLien:"https://chat.whatsapp.com/BxlffHRukXLKCY3vSALLz7" },
+  { id:"cote-ivoire", nom:"Côte d'Ivoire",   slug:"cote-ivoire", carteImage:"./images/carte-cote-ivoire.jpg", qrImage:"./images/qr-cote-ivoire.jpg", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy" },
+  { id:"brazzaville", nom:"Congo Brazza.",   slug:"brazzaville", carteImage:"./images/carte-brazzaville.jpg", qrImage:"./images/qr-brazzaville.jpg", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
+  { id:"mauritanie",  nom:"Mauritanie",      slug:"mauritanie",  carteImage:"./images/carte-mauritanie.jpg",  qrImage:"./images/qr-mauritanie.jpg",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
+  { id:"burkina",     nom:"Burkina-Faso",    slug:"burkina",     carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
 ];
+
+/* Géométrie du cercle de masquage selon le pays (coordonnées relatives 0 à 1) */
+function getCercleCoords(countryId) {
+  if (['cote-ivoire', 'mauritanie', 'burkina'].includes(countryId)) {
+    return { CX: 0.5203, CY: 0.5750, R: 0.25 };
+  }
+  return { CX: 0.5088, CY: 0.5485, R: 0.24 };
+}
 
 /* État global de l'application */
 let state = {
   communeActive: null,
   userImgObj: null,
+  backgroundImgObj: null, // Stocker l'objet image du fond
   offsetX: 0,
   offsetY: 0,
   isDragging: false,
   lastX: 0,
-  lastY: 0
+  lastY: 0,
+  currentWALink: "#"
 };
 
 const canvas = document.getElementById('previewCanvas');
 const ctx = canvas.getContext('2d');
-const imageCache = {};
 
-/* =========================================================
-   2. INITIALISATION & NAVIGATION
-   ========================================================= */
-function init() {
-  const grille = document.getElementById('grille');
-  COMMUNES.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'commune-btn';
-    btn.innerHTML = `<span class="commune-nom">${c.nom}</span><span class="commune-arrow">→</span>`;
-    btn.onclick = () => ouvrirCommune(c);
-    grille.appendChild(btn);
-  });
-  prechargerImages();
-}
+/* =========================================
+   2. INITIALISATION & NAVIGATION (Hash)
+========================================= */
+const grille = document.getElementById('grille');
+COMMUNES.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'commune-btn'; // Design initial rétabli
+  // IMPORTANT : L'HTML des boutons a été modifié pour enlever l'espace du drapeau
+  btn.innerHTML = `<span class="commune-nom">${c.nom}</span><span class="commune-arrow">→</span>`;
+  btn.onclick = () => ouvrirCommune(c);
+  grille.appendChild(btn);
+});
 
-function ouvrirCommune(c) {
-  state = { ...state, communeActive: c, userImgObj: null, offsetX: 0, offsetY: 0 };
+// ─────────────── 1. LOGIQUE DE ROUTAGE PAR HASH (Powerful) ───────────────
+
+// Ouvrir une commune
+async function ouvrirCommune(c) {
+  state = { ...state, communeActive: c, userImgObj: null, backgroundImgObj: null, offsetX: 0, offsetY: 0, currentWALink: c.whatsappLien };
   
   document.getElementById('home').style.display = 'none';
   document.getElementById('communePage').style.display = 'flex';
   document.getElementById('communeTitre').innerHTML = `J'y serai <span style="color:var(--accent)">— ${c.nom}</span>`;
   
+  // Masquer la section WhatsApp au départ
+  document.getElementById('waBlock').classList.remove('revealed');
+
   const qr = document.getElementById('qrImg');
-  qr.src = c.qrImage;
-  qr.style.display = 'block';
-  document.getElementById('waBtn').href = c.whatsappLien;
+  qr.src = c.qrImage; 
   
   document.getElementById('dlBtn').disabled = true;
   document.getElementById('photoInput').value = '';
@@ -296,52 +352,76 @@ function ouvrirCommune(c) {
   canvas.classList.remove('draggable');
   
   setStep(1);
+
+  // MISE A JOUR DU HASH ( ex: #mauritanie )
+  if(window.location.hash !== `#${c.slug}`) {
+      window.location.hash = c.slug;
+  }
+
+  // --- CHARGEMENT SÉCURISÉ DE L'IMAGE DE FOND ---
+  // On attend que l'image soit chargée AVANT de dessiner
+  await chargerImageFond(c.carteImage);
   dessinerApercu();
+}
+
+// Promesse pour charger l'image de fond
+function chargerImageFond(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous'; 
+        img.onload = () => {
+            state.backgroundImgObj = img;
+            resolve(img);
+        };
+        img.onerror = () => {
+            console.error("Impossible de charger l'image de fond : " + url);
+            state.backgroundImgObj = null; 
+            resolve(null);
+        };
+        img.src = url;
+    });
 }
 
 function retour() {
   document.getElementById('communePage').style.display = 'none';
   document.getElementById('home').style.display = 'flex';
   state.communeActive = null; 
+  state.backgroundImgObj = null;
+
+  // NETTOYAGE DU HASH ( Powerful )
+  window.location.hash = '';
 }
+
+// Fonction pour écouter le bouton "Précédent" du navigateur
+window.addEventListener('hashchange', detectCountryFromHash);
 
 function setStep(n) {
-  [1,2,3].forEach(i => document.getElementById('step'+i).classList.toggle('active', i<=n));
+  [1,2,3].forEach(i => document.getElementById('step'+i).classList.toggle('active', i===n));
 }
 
-function prechargerImages() {
-  COMMUNES.forEach(c => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => { imageCache[c.id] = img; };
-    img.src = c.carteImage;
-  });
-}
-
-/* =========================================================
-   3. GESTION DU CANVAS (Dessin & Recadrage)
-   ========================================================= */
+/* =========================================
+   3. GESTION DU CANVAS (Dessin & Drag)
+========================================= */
 function dessinerApercu() {
   const c = state.communeActive;
   if (!c) return;
 
   const W = canvas.width;  // Résolution interne (1080)
   const H = canvas.height; // Résolution interne (1080)
-  const cx = c.cercle.cx * W;
-  const cy = c.cercle.cy * H;
-  const r  = c.cercle.r * W;
+  const { CX, CY, R } = getCercleCoords(c.id);
+  const cx = CX * W, cy = CY * H, r = R * W;
 
-  // Effacer et fond blanc
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, W, H);
 
-  // 1. Dessiner le background (Template)
-  if (imageCache[c.id] && imageCache[c.id].complete) {
+  // --- DESSIN DU FOND SÉCURISÉ ---
+  if (state.backgroundImgObj) {
+    ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(imageCache[c.id], 0, 0, W, H);
+    ctx.drawImage(state.backgroundImgObj, 0, 0, W, H);
   } else {
-    // Fallback visuel si image non chargée
+    // Fallback si l'image n'est pas chargée
     ctx.fillStyle = '#0f2d5e';
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = 'white';
@@ -350,31 +430,32 @@ function dessinerApercu() {
     ctx.fillText(`Chargement du modèle...`, W/2, H*0.15);
   }
 
-  // 2. Dessiner la photo utilisateur (ou le placeholder)
+  // Masque circulaire
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.clip(); // Masque circulaire
+  ctx.closePath();
+  ctx.clip(); 
 
   if (state.userImgObj && state.userImgObj.complete) {
     const img = state.userImgObj;
-    // Logique "Cover" (remplir le cercle sans déformer)
+    // Logique "Cover" (remplir sans déformer)
     const scale = Math.max((r * 2) / img.width, (r * 2) / img.height);
     const sw = img.width * scale;
     const sh = img.height * scale;
 
-    // Dessin avec les offsets gérés par le drag&drop
+    // Dessin avec décalages du drag
     ctx.drawImage(img, cx - sw/2 + state.offsetX, cy - sh/2 + state.offsetY, sw, sh);
   } else {
-    // Cercle vide stylisé
+    // Placeholder circulaire vide stylisé
     ctx.fillStyle = 'rgba(0,0,0,0.15)';
     ctx.fill();
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
     ctx.lineWidth = 4;
     ctx.setLineDash([15, 10]);
     ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = `${r*0.5}px sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,245,0.9)';
+    ctx.font = `${r*0.4}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('📷', cx, cy);
@@ -382,6 +463,17 @@ function dessinerApercu() {
   ctx.restore();
 }
 
+// ───────────────────── 2. TELECHARGEMENT AUTO ( Powerful A ) ─────────────────────
+
+function triggerDownload() {
+  if (!state.communeActive || !canvas) return;
+  const link = document.createElement('a');
+  link.download = `JYSERAI_${state.communeActive.nom.replace(/\s+/g, '_')}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// Fonction Powerful A
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -397,36 +489,49 @@ function handlePhoto(e) {
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
+      // 1. Charger et dessiner
       state.userImgObj = img;
       setStep(3);
       document.getElementById('dlBtn').disabled = false;
-      document.getElementById('uploadText').textContent = 'Changer ma photo';
-      
-      // Activer l'UI de glissement
       canvas.classList.add('draggable');
       document.getElementById('dragHint').classList.add('visible');
-      
+      document.getElementById('uploadText').textContent = 'Modifier ma photo';
       dessinerApercu();
+
+      // ────────── LOGIQUE POWERFUL A ( Auto-téléchargement ) ──────────
+      
+      // A. Télécharger instantanément après le rendu initial ( cover )
+      triggerDownload();
+
+      // B. Révéler la section WhatsApp
+      document.getElementById('waBlock').classList.add('revealed');
+      
+      // ───────────────────────────────────────────────────────────────
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
+// Clic manuel (autorisé par l'Option A pour les recadrages)
 function telecharger() {
-  if (!state.communeActive || !canvas) return;
-  const link = document.createElement('a');
-  link.download = `Forum_10k_Codeurs_${state.communeActive.id}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+  triggerDownload();
 }
 
-/* =========================================================
-   4. LOGIQUE DE GLISSEMENT (Mouvement de la photo)
-   ========================================================= */
+// Gestion clic WhatsApp
+document.getElementById('whatsappGroupBtn').onclick = () => {
+    if (state.currentWALink && state.currentWALink !== "#") {
+        window.open(state.currentWALink, '_blank');
+    } else {
+        alert("Lien WhatsApp disponible prochainement !");
+    }
+};
+
+/* =========================================
+   4. LOGIQUE DE GLISSEMENT (Mouvement)
+========================================= */
 function getPointerPos(e) {
   const rect = canvas.getBoundingClientRect();
-  // Facteur d'échelle entre le CSS (ex: 460px) et la résolution interne (1080px)
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
   const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -440,9 +545,10 @@ function getPointerPos(e) {
 function pointerDansCercle(x, y) {
   const c = state.communeActive;
   if (!c) return false;
-  const cx = c.cercle.cx * canvas.width;
-  const cy = c.cercle.cy * canvas.height;
-  const r = c.cercle.r * canvas.width;
+  const W = canvas.width;
+  const H = canvas.height;
+  const { CX, CY, R } = getCercleCoords(c.id);
+  const cx = CX * W, cy = CY * H, r = R * W;
   return Math.pow(x - cx, 2) + Math.pow(y - cy, 2) <= Math.pow(r, 2);
 }
 
@@ -453,36 +559,59 @@ function handlePointerDown(e) {
     state.isDragging = true;
     state.lastX = pos.x;
     state.lastY = pos.y;
-    e.preventDefault(); // Stoppe le scroll natif
+    if(e.cancelable) e.preventDefault(); 
   }
 }
 
 function handlePointerMove(e) {
   if (!state.isDragging) return;
   const pos = getPointerPos(e);
-  // Ajout du delta au décalage existant
   state.offsetX += pos.x - state.lastX;
   state.offsetY += pos.y - state.lastY;
   state.lastX = pos.x;
   state.lastY = pos.y;
   dessinerApercu();
-  e.preventDefault();
+  if(e.cancelable) e.preventDefault();
 }
 
 function handlePointerUp() { state.isDragging = false; }
 
-// Mouse events
+// mouse events
 canvas.addEventListener('mousedown', handlePointerDown);
 window.addEventListener('mousemove', handlePointerMove);
 window.addEventListener('mouseup', handlePointerUp);
 
-// Touch events (Mobile)
+// touch events (Mobile)
 canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
 window.addEventListener('touchmove', handlePointerMove, { passive: false });
 window.addEventListener('touchend', handlePointerUp);
 
+// ─────────────── ROUTAGE POWERFUL (DÉMARRAGE) ───────────────
+
+// Fonction pour détecter si un pays est spécifié dans l'URL (Hash) au démarrage
+function detectCountryFromHash() {
+  const hash = window.location.hash;
+  if (hash) {
+    const slugPotential = hash.substring(1); // Enlever le '#'
+    const paysTrouve = COMMUNES.find(c => c.slug === slugPotential);
+    if (paysTrouve) {
+      ouvrirCommune(paysTrouve);
+      return;
+    }
+  }
+  
+  // Si pas de hash valide, on s'assure d'être à l'accueil
+  document.getElementById('communePage').style.display = 'none';
+  document.getElementById('home').style.display = 'flex';
+  state.communeActive = null;
+}
+
 // Initialisation au chargement
-window.onload = init;
+window.onload = () => {
+  // Vérifier le hash au démarrage ( Powerful )
+  detectCountryFromHash();
+};
 </script>
+
 </body>
 </html>
