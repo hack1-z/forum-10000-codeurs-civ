@@ -50,22 +50,32 @@
     /* ── GRILLE PAYS RESPONSIVE ── */
     .grille {
       display: grid;
-      /* Adaptabilité : largeur minimale de 200px pour des boutons plus petits côte à côte */
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px; width: 100%; max-width: 800px; padding: 0 20px;
+      /* Affiche 2 colonnes sur tablette/desktop, 1 colonne sur mobile */
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px; 
+      width: 100%; 
+      max-width: 600px; 
+      padding: 0 20px;
+      justify-items: center; /* Centre les boutons dans la grille */
     }
     @media (max-width: 400px) { .grille { grid-template-columns: 1fr; } }
 
     /* ── BOUTONS PAYS (Fins et ajustés au texte) ── */
     .commune-btn {
-      background: var(--card-bg); border: 1.5px solid var(--border);
+      background: var(--card-bg); 
+      border: 1.5px solid var(--border);
       border-radius: var(--radius); 
-      width: 4.5cm;height: 1.5cm;
-      /* Ajustement MODIFIÉ : padding très réduit pour supprimer les espaces superflus */
-      padding: 6px 12px; 
-      display: flex; align-items: center; justify-content: space-between;
-      cursor: pointer; color: var(--primary); text-align: left;
-      transition: var(--transition); box-shadow: 0 2px 8px rgba(15,45,94,0.04);gap:6px;
+      width: 100%; /* S'adapte à la grille */
+      max-width: 300px; /* Ne dépasse pas une taille confortable */
+      min-height: 60px;
+      padding: 0 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      cursor: pointer; 
+      color: var(--primary); 
+      transition: var(--transition); 
+      box-shadow: 0 2px 8px rgba(15,45,94,0.04);
     }
     
     .commune-btn:active {
