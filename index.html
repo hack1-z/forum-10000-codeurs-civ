@@ -300,14 +300,17 @@ const COMMUNES = [
   { id:"brazzaville", nom:"Congo Brazza.",   slug:"brazzaville", carteImage:"./images/carte-brazzaville.jpg", qrImage:"./images/qr-brazzaville.jpg", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
   { id:"mauritanie",  nom:"Mauritanie",      slug:"mauritanie",  carteImage:"./images/carte-mauritanie.jpg",  qrImage:"./images/qr-mauritanie.jpg",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
   { id:"burkina",     nom:"Burkina-Faso",    slug:"burkina",     carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
+  { id:"comores",     nom:"Comores",         slug:"comores",     carteImage:"./images/carte-comores.jpg",     qrImage:"./images/qr-comores.jpg",     whatsappLien:"https://chat.whatsapp.com/HdrNK1kySNe406MnaDbmf9?s=sw&p=a&ilr=0&amv=2" },
+  { id:"senegal",     nom:"Sénégal",         slug:"senegal",     carteImage:"./images/carte-senegal.jpg",     qrImage:"./images/qr-senegal.jpg",     whatsappLien:"https://chat.whatsapp.com/Il8X5Q5Q5Q5Q5Q5Q5Q5Q5" },
+
 ];
 
 /* Géométrie du cercle de masquage selon le pays (coordonnées relatives 0 à 1) */
 function getCercleCoords(countryId) {
-  if (['cote-ivoire', 'mauritanie', 'burkina'].includes(countryId)) {
+  if (['cote-ivoire', 'mauritanie', 'burkina', 'comores'].includes(countryId)) {
     return { CX: 0.5203, CY: 0.5750, R: 0.25 };
   }
-  return { CX: 0.5088, CY: 0.5485, R: 0.24 };
+  return { CX: 0.5088, CY: 0.5388, R: 0.235 };
 }
 
 /* État global de l'application */
@@ -484,6 +487,7 @@ function triggerDownload() {
 }
 
 // Fonction Powerful A
+// Fonction Powerful A
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -508,15 +512,13 @@ function handlePhoto(e) {
       document.getElementById('uploadText').textContent = 'Modifier ma photo';
       dessinerApercu();
 
-      // ────────── LOGIQUE POWERFUL A ( Auto-téléchargement ) ──────────
+      // ────────── MODIFICATION EFFECTUÉE ──────────
+      // Le triggerDownload() a été supprimé ici.
       
-      // A. Télécharger instantanément après le rendu initial ( cover )
-      triggerDownload();
-
       // B. Révéler la section WhatsApp
       document.getElementById('waBlock').classList.add('revealed');
       
-      // ───────────────────────────────────────────────────────────────
+      // ────────────────────────────────────────────
     };
     img.src = ev.target.result;
   };
