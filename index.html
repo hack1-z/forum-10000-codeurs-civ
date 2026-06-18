@@ -302,12 +302,15 @@ const COMMUNES = [
   { id:"burkina",     nom:"Burkina-Faso",    slug:"burkina",     carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
   { id:"comores",     nom:"Comores",         slug:"comores",     carteImage:"./images/carte-comores.jpg",     qrImage:"./images/qr-comores.jpg",     whatsappLien:"https://chat.whatsapp.com/HdrNK1kySNe406MnaDbmf9?s=sw&p=a&ilr=0&amv=2" },
   { id:"senegal",     nom:"Sénégal",         slug:"senegal",     carteImage:"./images/carte-senegal.jpg",     qrImage:"./images/qr-senegal.jpg",     whatsappLien:"https://chat.whatsapp.com/CZN94iNpbrT7AbfSS6psKc?s=cl&p=i&mlu=1" },
+  { id:"togo",        nom:"Togo",            slug:"togo",        carteImage:"./images/carte-togo.jpg",        qrImage:"./images/qr-togo.jpg",        whatsappLien:"https://chat.whatsapp.com/HcFC7vpZ8gu965bE52VuKW" },
+  { id:"france",      nom:"France",          slug:"france",      carteImage:"./images/carte-france.jpg",      qrImage:"./images/qr-france.jpg",       whatsappLien:"https://chat.whatsapp.com/Ja3DhFV67BRHJrymgddtcW?mode=gi_t" },
+  { id:"madagascar",  nom:"Madagascar",      slug:"madagascar",  carteImage:"./images/carte-madagascar.jpg",  qrImage:"./images/qr-madagascar.jpg",   whatsappLien:"https://chat.whatsapp.com/IENNGCbG2s7EyM0oobYzfL" },
 
 ];
 
 /* Géométrie du cercle de masquage selon le pays (coordonnées relatives 0 à 1) */
 function getCercleCoords(countryId) {
-  if (['cote-ivoire', 'mauritanie', 'burkina', 'comores', 'senegal'].includes(countryId)) {
+  if (['cote-ivoire', 'mauritanie', 'burkina', 'comores', 'senegal','togo','madagascar'].includes(countryId)) {
     return { CX: 0.5203, CY: 0.5750, R: 0.25 };
   }
   return { CX: 0.5088, CY: 0.5398, R: 0.235 };
