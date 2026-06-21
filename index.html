@@ -23,7 +23,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--bg);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -32,8 +31,6 @@
     }
 
     .page { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 48px; }
-
-    /* Utilitaires */
     .hide { display: none !important; }
 
     /* ── EN-TÊTE ── */
@@ -41,8 +38,7 @@
     .badge {
       display: inline-block; background: #e8effa; border: 1px solid #c7d4f5;
       border-radius: 24px; padding: 6px 16px; font-size: 13px; font-weight: 700;
-      color: var(--accent); margin-bottom: 16px;
-    }
+      color: var(--accent); margin-bottom: 16px;    }
     .titre { font-size: clamp(28px, 6vw, 36px); font-weight: 800; margin-bottom: 8px; color: var(--primary); letter-spacing: -0.02em; }
     .sous-titre { font-size: 16px; color: var(--text-muted); line-height: 1.5; }
     .flag { font-size: 48px; margin-top: 8px; }
@@ -50,23 +46,22 @@
     /* ── GRILLE PAYS RESPONSIVE ── */
     .grille {
       display: grid;
-      /* Affiche 2 colonnes sur tablette/desktop, 1 colonne sur mobile */
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 16px; 
       width: 100%; 
       max-width: 600px; 
       padding: 0 20px;
-      justify-items: center; /* Centre les boutons dans la grille */
+      justify-items: center;
     }
     @media (max-width: 400px) { .grille { grid-template-columns: 1fr; } }
 
-    /* ── BOUTONS PAYS (Fins et ajustés au texte) ── */
+    /* ── BOUTONS PAYS ── */
     .commune-btn {
       background: var(--card-bg); 
       border: 1.5px solid var(--border);
       border-radius: var(--radius); 
-      width: 100%; /* S'adapte à la grille */
-      max-width: 300px; /* Ne dépasse pas une taille confortable */
+      width: 100%; 
+      max-width: 300px; 
       min-height: 60px;
       padding: 0 20px; 
       display: flex; 
@@ -77,7 +72,6 @@
       transition: var(--transition); 
       box-shadow: 0 2px 8px rgba(15,45,94,0.04);
     }
-    
     .commune-btn:active {
       transform: scale(0.98); border-color: var(--accent); background: #f0f4ff;
     }
@@ -86,13 +80,7 @@
             transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent);
         }
     }
-    
-    .commune-nom { 
-        /* Ajustement MODIFIÉ : taille de police réduite */
-        font-size: 15px; 
-        font-weight: 700; display: flex; align-items: center; gap: 8px; 
-    }
-    /* Ajustement MODIFIÉ : Flèche réduite */
+    .commune-nom { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .commune-arrow { font-size: 16px; color: var(--accent); transition: transform 0.2s; }
     .commune-btn:hover .commune-arrow { transform: translateX(4px); }
 
@@ -104,31 +92,26 @@
       transition: color 0.2s;
     }
     .retour-btn:hover { color: var(--primary); }
-    
     .commune-titre { font-size: clamp(22px, 5vw, 28px); font-weight: 800; text-align: center; color: var(--primary); margin-bottom: 4px; padding: 0 20px;}
     .commune-sous-titre { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; }
 
     .generator { width: 100%; max-width: 500px; padding: 0 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-
+    
     /* Barre d'étapes */
     .steps { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
     .step { background: #e8effa; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; color: var(--text-muted); border: 1px solid var(--border); transition: var(--transition); }
     .step.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* Zone Canvas Responsive */
+    /* Zone Canvas */
     .canvas-wrap {
       position: relative; width: 100%; max-width: 460px; aspect-ratio: 1 / 1;
       border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
       border: 1.5px solid var(--border); background: var(--card-bg);
     }
-    canvas {
-      width: 100%; height: 100%; display: block; object-fit: contain;
-      touch-action: none;
-    }
+    canvas { width: 100%; height: 100%; display: block; object-fit: contain; touch-action: none; }
     canvas.draggable { cursor: grab; }
     canvas.draggable:active { cursor: grabbing; }
 
-    /* Hint d'interaction */
     .drag-hint {
       display: none; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 600;
       color: var(--accent); background: #e8effa; border: 1px solid #c7d4f5;
@@ -148,6 +131,14 @@
     .upload-text { font-size: 16px; font-weight: 700; color: var(--accent); }
     .upload-sub { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
 
+    /* Option d'engagement WhatsApp */
+    .wa-opt-container {
+      display: flex; align-items: center; gap: 10px; width: 100%; background: #eefbf3;
+      padding: 12px 16px; border-radius: 12px; border: 1px solid #c1f0d0; cursor: pointer;
+    }
+    .wa-opt-container input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--whatsapp); }
+    .wa-opt-text { font-size: 14px; font-weight: 600; color: #1e7e34; }
+
     /* Boutons d'action */
     .dl-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -158,33 +149,18 @@
     .dl-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
     .dl-btn:disabled { background: #c5cedf; cursor: not-allowed; box-shadow: none; }
 
-    /* ========= WHATSAPP SECTION ( Powerful Conditionnelle ) ========= */
+    /* ========= WHATSAPP SECTION ========= */
     .wa-section {
-      width: 100%;
-      max-width: 500px;
-      padding: 32px 20px 0;
-      /* Masquage par défaut avec transition */
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(20px);
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%; max-width: 500px; padding: 32px 20px 0; opacity: 0; pointer-events: none;
+      transform: translateY(20px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    /* Classe d'activation de la section */
-    .wa-section.revealed {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
+    .wa-section.revealed { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .separator { border: none; border-top: 1.5px solid var(--border); margin-bottom: 24px; }
     .wa-title { font-size: 19px; font-weight: 800; text-align: center; margin-bottom: 4px; color: var(--primary); }
-    .wa-sub { text-align: center; font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+    .wa-sub { text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
     .wa-flex { display: flex; flex-direction: column; align-items: center; gap: 18px; }
 
-    @media (min-width: 560px) {
-      .wa-flex { flex-direction: row; justify-content: center; }
-    }
+    @media (min-width: 560px) { .wa-flex { flex-direction: row; justify-content: center; } }
 
     .qr-place {
       background: var(--card-bg); border-radius: var(--radius); padding: 12px;
@@ -200,20 +176,15 @@
       width: 100%; justify-content: center; transition: background 0.2s;
     }
     .wa-button:hover { background: var(--whatsapp-hover); }
+    @media (min-width: 560px) { .wa-button { width: auto; padding: 14px 32px; } }
 
-    @media (min-width: 560px) {
-      .wa-button { width: auto; padding: 14px 32px; }
-    }
-
-    .footer-note { margin-top: 48px; padding-top: 20px; border-top: 1.5px solid var(--border); width: 100%; max-width: 600px; text-align: center; font-size: 13px; color: var(--text-soft); font-weight: 600; }
-
+    .footer-note { margin-top: 48px; padding-top: 20px; border-top: 1.5px solid var(--border); width: 100%; max-width: 600px; text-align: center; font-size: 13px; color: var(--text-muted); font-weight: 600; }
     @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
 <div class="page" id="app">
-
   <div id="home" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
     <div class="hero">
       <div class="badge">4e Édition · 18 Juillet 2026</div>
@@ -233,7 +204,7 @@
       </button>
       <div class="badge" style="margin:0;">18 Juil 2026</div>
     </div>
-    
+        
     <h2 class="commune-titre" id="communeTitre">J'y serai</h2>
     <p class="commune-sous-titre">Forum 10.000 Codeurs · 4e Édition</p>
 
@@ -264,9 +235,14 @@
         <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" onchange="handlePhoto(event)">
       </div>
 
+      <label class="wa-opt-container hide" id="waOptWrap" for="waCheckbox">
+        <input type="checkbox" id="waCheckbox" checked>
+        <span class="wa-opt-text">Je rejoins aussi le groupe WhatsApp de mon pays 🚀</span>
+      </label>
+
       <button class="dl-btn" id="dlBtn" disabled onclick="telecharger()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Télécharger ma carte
+        <span id="dlBtnText">Télécharger ma carte</span>
       </button>
     </div>
 
@@ -284,19 +260,19 @@
         </button>
       </div>
     </div>
-    
+        
     <div class="footer-note">🌐 10000codeurs.com/forums</div>
   </div>
 </div>
 
 <script>
 /* =========================================
-   1. DONNÉES & CONFIGURATION (Avec Slugs)
+   1. DONNÉES & CONFIGURATION (Avec le lien CI mis à jour)
 ========================================= */
 const COMMUNES = [
   { id:"rdc",         nom:"R.D. Congo",      slug:"rdc",         carteImage:"./images/carte-rdc.jpg",          qrImage:"./images/qr-rdc.jpg",          whatsappLien:"https://chat.whatsapp.com/BtYoBjVhkdY15ZUbhIhLFR" },
   { id:"cameroun",    nom:"Cameroun",        slug:"cameroun",    carteImage:"./images/carte-cameroun.jpg",    qrImage:"./images/qr-cameroun.jpg",    whatsappLien:"https://chat.whatsapp.com/BxlffHRukXLKCY3vSALLz7" },
-  { id:"cote-ivoire", nom:"Côte d'Ivoire",   slug:"cote-ivoire", carteImage:"./images/carte-cote-ivoire.jpg", qrImage:"./images/qr-cote-ivoire.jpg", whatsappLien:"https://chat.whatsapp.com/FK0ykUGdf3bIADVz2Xe1wy" },
+  { id:"cote-ivoire", nom:"Côte d'Ivoire",   slug:"cote-ivoire", carteImage:"./images/carte-cote-ivoire.jpg", qrImage:"./images/qr-cote-ivoire.jpg", whatsappLien:"https://chat.whatsapp.com/EUK0pEQlmQ7689IYhZnKyu" },
   { id:"brazzaville", nom:"Congo Brazza.",   slug:"brazzaville", carteImage:"./images/carte-brazzaville.jpg", qrImage:"./images/qr-brazzaville.jpg", whatsappLien:"https://chat.whatsapp.com/KAOdolW2XPI7UVBXSSb4Lw?mode=gi_t" },
   { id:"mauritanie",  nom:"Mauritanie",      slug:"mauritanie",  carteImage:"./images/carte-mauritanie.jpg",  qrImage:"./images/qr-mauritanie.jpg",  whatsappLien:"https://chat.whatsapp.com/EgZnJfZMbpw6duBUvVb6G8" },
   { id:"burkina",     nom:"Burkina-Faso",    slug:"burkina",     carteImage:"./images/carte-burkina.jpg",     qrImage:"./images/qr-burkina.jpg",     whatsappLien:"https://chat.whatsapp.com/KK8swjSepazH9AnrUZfyJQ" },
@@ -305,10 +281,8 @@ const COMMUNES = [
   { id:"togo",        nom:"Togo",            slug:"togo",        carteImage:"./images/carte-togo.jpg",        qrImage:"./images/qr-togo.jpg",        whatsappLien:"https://chat.whatsapp.com/IENNGCbG2s7EyM0oobYzfL?s=cl&p=a&ilr=1" },
   { id:"france",      nom:"France",          slug:"france",      carteImage:"./images/carte-france.jpg",      qrImage:"./images/qr-france.jpg",       whatsappLien:"https://chat.whatsapp.com/Ja3DhFV67BRHJrymgddtcW?mode=gi_t" },
   { id:"madagascar",  nom:"Madagascar",      slug:"madagascar",  carteImage:"./images/carte-madagascar.jpg",  qrImage:"./images/qr-madagascar.jpg",   whatsappLien:"https://chat.whatsapp.com/IENNGCbG2s7EyM0oobYzfL" },
-
 ];
 
-/* Géométrie du cercle de masquage selon le pays (coordonnées relatives 0 à 1) */
 function getCercleCoords(countryId) {
   if (['cote-ivoire', 'mauritanie', 'burkina', 'comores', 'senegal','togo','madagascar'].includes(countryId)) {
     return { CX: 0.5203, CY: 0.5750, R: 0.25 };
@@ -316,71 +290,65 @@ function getCercleCoords(countryId) {
   return { CX: 0.5088, CY: 0.5398, R: 0.235 };
 }
 
-/* État global de l'application */
 let state = {
   communeActive: null,
   userImgObj: null,
-  backgroundImgObj: null, // Stocker l'objet image du fond
+  backgroundImgObj: null,
   offsetX: 0,
   offsetY: 0,
   isDragging: false,
   lastX: 0,
   lastY: 0,
-  currentWALink: "#"
+  currentWALink: "#",
+  hasJoinedWA: false
 };
 
 const canvas = document.getElementById('previewCanvas');
 const ctx = canvas.getContext('2d');
 
 /* =========================================
-   2. INITIALISATION & NAVIGATION (Hash)
+   2. INITIALISATION & NAVIGATION
 ========================================= */
 const grille = document.getElementById('grille');
 COMMUNES.forEach(c => {
   const btn = document.createElement('button');
-  btn.className = 'commune-btn'; // Design initial rétabli
-  // IMPORTANT : L'HTML des boutons a été modifié pour enlever l'espace du drapeau
+  btn.className = 'commune-btn';
   btn.innerHTML = `<span class="commune-nom">${c.nom}</span><span class="commune-arrow">→</span>`;
   btn.onclick = () => ouvrirCommune(c);
   grille.appendChild(btn);
 });
 
-// ─────────────── 1. LOGIQUE DE ROUTAGE PAR HASH (Powerful) ───────────────
-
-// Ouvrir une commune
 async function ouvrirCommune(c) {
-  state = { ...state, communeActive: c, userImgObj: null, backgroundImgObj: null, offsetX: 0, offsetY: 0, currentWALink: c.whatsappLien };
-  
+  state = { ...state, communeActive: c, userImgObj: null, backgroundImgObj: null, offsetX: 0, offsetY: 0, currentWALink: c.whatsappLien, hasJoinedWA: false };
+    
   document.getElementById('home').style.display = 'none';
   document.getElementById('communePage').style.display = 'flex';
   document.getElementById('communeTitre').innerHTML = `J'y serai <span style="color:var(--accent)">— ${c.nom}</span>`;
-  
-  // Masquer la section WhatsApp au départ
+    
   document.getElementById('waBlock').classList.remove('revealed');
+  document.getElementById('waOptWrap').classList.add('hide');
+  document.getElementById('waCheckbox').checked = true;
 
   const qr = document.getElementById('qrImg');
   qr.src = c.qrImage; 
   
   document.getElementById('dlBtn').disabled = true;
+  document.getElementById('dlBtnText').textContent = "Télécharger ma carte";
   document.getElementById('photoInput').value = '';
   document.getElementById('dragHint').classList.remove('visible');
   document.getElementById('uploadText').textContent = 'Choisir ma photo';
   canvas.classList.remove('draggable');
-  
+    
   setStep(1);
 
-  // MISE A JOUR DU HASH ( ex: #mauritanie )
   if(window.location.hash !== `#${c.slug}`) {
       window.location.hash = c.slug;
   }
 
-  // --- CHARGEMENT SÉCURISÉ DE L'IMAGE DE FOND ---
-  // On attend que l'image soit chargée AVANT de dessiner
   await chargerImageFond(c.carteImage);
   dessinerApercu();
 }
 
-// Promesse pour charger l'image de fond
 function chargerImageFond(url) {
     return new Promise((resolve) => {
         const img = new Image();
@@ -403,12 +371,9 @@ function retour() {
   document.getElementById('home').style.display = 'flex';
   state.communeActive = null; 
   state.backgroundImgObj = null;
-
-  // NETTOYAGE DU HASH ( Powerful )
   window.location.hash = '';
 }
 
-// Fonction pour écouter le bouton "Précédent" du navigateur
 window.addEventListener('hashchange', detectCountryFromHash);
 
 function setStep(n) {
@@ -416,14 +381,14 @@ function setStep(n) {
 }
 
 /* =========================================
-   3. GESTION DU CANVAS (Dessin & Drag)
+   3. GESTION DU CANVAS
 ========================================= */
 function dessinerApercu() {
   const c = state.communeActive;
   if (!c) return;
 
-  const W = canvas.width;  // Résolution interne (1080)
-  const H = canvas.height; // Résolution interne (1080)
+  const W = canvas.width;
+  const H = canvas.height;
   const { CX, CY, R } = getCercleCoords(c.id);
   const cx = CX * W, cy = CY * H, r = R * W;
 
@@ -431,13 +396,11 @@ function dessinerApercu() {
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, W, H);
 
-  // --- DESSIN DU FOND SÉCURISÉ ---
   if (state.backgroundImgObj) {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(state.backgroundImgObj, 0, 0, W, H);
   } else {
-    // Fallback si l'image n'est pas chargée
     ctx.fillStyle = '#0f2d5e';
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = 'white';
@@ -446,7 +409,6 @@ function dessinerApercu() {
     ctx.fillText(`Chargement du modèle...`, W/2, H*0.15);
   }
 
-  // Masque circulaire
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -455,15 +417,11 @@ function dessinerApercu() {
 
   if (state.userImgObj && state.userImgObj.complete) {
     const img = state.userImgObj;
-    // Logique "Cover" (remplir sans déformer)
     const scale = Math.max((r * 2) / img.width, (r * 2) / img.height);
     const sw = img.width * scale;
     const sh = img.height * scale;
-
-    // Dessin avec décalages du drag
     ctx.drawImage(img, cx - sw/2 + state.offsetX, cy - sh/2 + state.offsetY, sw, sh);
   } else {
-    // Placeholder circulaire vide stylisé
     ctx.fillStyle = 'rgba(0,0,0,0.15)';
     ctx.fill();
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
@@ -479,8 +437,6 @@ function dessinerApercu() {
   ctx.restore();
 }
 
-// ───────────────────── 2. TELECHARGEMENT AUTO ( Powerful A ) ─────────────────────
-
 function triggerDownload() {
   if (!state.communeActive || !canvas) return;
   const link = document.createElement('a');
@@ -489,61 +445,65 @@ function triggerDownload() {
   link.click();
 }
 
-// Fonction Powerful A
-// Fonction Powerful A
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
   if (!file.type.startsWith('image/')) {
     alert('Veuillez sélectionner une image (JPG, PNG)'); return;
   }
-  
+    
   setStep(2);
-  state.offsetX = 0; // Reset position
+  state.offsetX = 0; 
   state.offsetY = 0;
 
   const reader = new FileReader();
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
-      // 1. Charger et dessiner
       state.userImgObj = img;
       setStep(3);
       document.getElementById('dlBtn').disabled = false;
       canvas.classList.add('draggable');
       document.getElementById('dragHint').classList.add('visible');
       document.getElementById('uploadText').textContent = 'Modifier ma photo';
+      document.getElementById('waOptWrap').classList.remove('hide'); 
+      document.getElementById('waBlock').classList.add('revealed'); 
       dessinerApercu();
-
-      // ────────── MODIFICATION EFFECTUÉE ──────────
-      // Le triggerDownload() a été supprimé ici.
-      
-      // B. Révéler la section WhatsApp
-      document.getElementById('waBlock').classList.add('revealed');
-      
-      // ────────────────────────────────────────────
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-// Clic manuel (autorisé par l'Option A pour les recadrages)
-function telecharger() {
-  triggerDownload();
+function openWhatsApp() {
+  if (state.currentWALink && state.currentWALink !== "#") {
+      window.open(state.currentWALink, '_blank');
+      state.hasJoinedWA = true;
+  }
 }
 
-// Gestion clic WhatsApp
+function telecharger() {
+  const shouldJoinWA = document.getElementById('waCheckbox').checked;
+  
+  triggerDownload();
+  
+  if (shouldJoinWA && !state.hasJoinedWA) {
+    setTimeout(() => {
+      openWhatsApp();
+    }, 400); 
+  }
+
+  const btnText = document.getElementById('dlBtnText');
+  btnText.textContent = "Carte téléchargée ! ✨";
+  setTimeout(() => { btnText.textContent = "Télécharger ma carte"; }, 3000);
+}
+
 document.getElementById('whatsappGroupBtn').onclick = () => {
-    if (state.currentWALink && state.currentWALink !== "#") {
-        window.open(state.currentWALink, '_blank');
-    } else {
-        alert("Lien WhatsApp disponible prochainement !");
-    }
+    openWhatsApp();
 };
 
 /* =========================================
-   4. LOGIQUE DE GLISSEMENT (Mouvement)
+   4. LOGIQUE DE GLISSEMENT
 ========================================= */
 function getPointerPos(e) {
   const rect = canvas.getBoundingClientRect();
@@ -574,7 +534,7 @@ function handlePointerDown(e) {
     state.isDragging = true;
     state.lastX = pos.x;
     state.lastY = pos.y;
-    if(e.cancelable) e.preventDefault(); 
+    if(e.cancelable) e.preventDefault();   
   }
 }
 
@@ -591,42 +551,32 @@ function handlePointerMove(e) {
 
 function handlePointerUp() { state.isDragging = false; }
 
-// mouse events
 canvas.addEventListener('mousedown', handlePointerDown);
 window.addEventListener('mousemove', handlePointerMove);
 window.addEventListener('mouseup', handlePointerUp);
 
-// touch events (Mobile)
 canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
 window.addEventListener('touchmove', handlePointerMove, { passive: false });
-window.addEventListener('touchend', handlePointerUp);
+canvas.addEventListener('touchend', handlePointerUp);
 
-// ─────────────── ROUTAGE POWERFUL (DÉMARRAGE) ───────────────
-
-// Fonction pour détecter si un pays est spécifié dans l'URL (Hash) au démarrage
 function detectCountryFromHash() {
   const hash = window.location.hash;
   if (hash) {
-    const slugPotential = hash.substring(1); // Enlever le '#'
+    const slugPotential = hash.substring(1);
     const paysTrouve = COMMUNES.find(c => c.slug === slugPotential);
     if (paysTrouve) {
       ouvrirCommune(paysTrouve);
       return;
     }
   }
-  
-  // Si pas de hash valide, on s'assure d'être à l'accueil
   document.getElementById('communePage').style.display = 'none';
   document.getElementById('home').style.display = 'flex';
   state.communeActive = null;
 }
 
-// Initialisation au chargement
 window.onload = () => {
-  // Vérifier le hash au démarrage ( Powerful )
   detectCountryFromHash();
 };
 </script>
-
 </body>
 </html>
